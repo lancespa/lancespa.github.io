@@ -1,59 +1,98 @@
-new Vue({
-    el: '#app',
-  
-    data: {
-      streamers: [],
-      filter: '',
-      option: 'all'
-    },
-  
-    beforeMount() {
-      this.getTwitchStreamers();
-    },
-  
-    methods: {
-      getTwitchStreamers() {
-        fetch('https://gist.githubusercontent.com/QuincyLarson/2ff6892f948d0b7118a99264fd9c1ce8/raw/e9e12f154d71cf77fc32e94e990749a7383ca2d6/Twitch%2520sample%2520API%2520responses%2520in%2520array%2520form')
-          .then(raw => raw.json())
-          .then(json => this.streamers = this.setStreamers(json))
-          .catch(error => console.warn(error));
-      },
-  
-      setStreamers(json) {
-        const _tmp = json.filter(streamer => streamer.stream || streamer.display_name);
-  
-        return _tmp.map((streamer) => {
-          if (streamer.stream) {
-            const { display_name, status, logo, url } = streamer.stream;
-  
-            return { display_name, status, logo, url, active: true };
-          }
-  
-          return {
-            display_name: streamer.display_name,
-            url: `https://www.twitch.tv/${streamer.display_name.toLowerCase()}`
-          };
-        });
-      }
-    },
-  
-    computed: {
-      filteredStreamers() {
-        return this.streamers.filter((streamer) => {
-          let matches = true;
-  
-          if (this.filter !== '' && !streamer.display_name.toLowerCase().includes(this.filter.toLowerCase())) {
-            matches = false;
-          }
-  
-          if ((this.option === 'streaming' && !streamer.active) || (this.option === 'offline' && streamer.active)) {
-            matches = false;
-          }
-  
-          if (matches) return streamer;
-        });
-      }
+// Source: http://www.canadastop100.com/
+console.log(Vue.version);
+var laptopData = [{
+  "name": "3M Canada Company",
+  "Community Involvement": 10,
+  "Employee Engagement & Performance": 7,
+  "Financial Benefits & Compensation": 9,
+  "Health & Family-Friendly Benefits": 9,
+  "Physical Workplace": 10,
+  "Training & Skills Development": 9,
+  "Vacation & Personal Time-Off": 6,
+  "Work Atmosphere & Communications": 10,
+  "Total Score": 70
+}, {
+  "name": "Aboriginal Peoples Television Network Inc. / APTN",
+  "Community Involvement": 9,
+  "Employee Engagement & Performance": 6,
+  "Financial Benefits & Compensation": 7,
+  "Health & Family-Friendly Benefits": 9,
+  "Physical Workplace": 7,
+  "Training & Skills Development": 9,
+  "Vacation & Personal Time-Off": 9,
+  "Work Atmosphere & Communications": 9,
+  "Total Score": 65
+}, {
+  "name": "Accenture Inc.",
+  "Community Involvement": 10,
+  "Employee Engagement & Performance": 9,
+  "Financial Benefits & Compensation": 7,
+  "Health & Family-Friendly Benefits": 9,
+  "Physical Workplace": 7,
+  "Training & Skills Development": 7,
+  "Vacation & Personal Time-Off": 6,
+  "Work Atmosphere & Communications": 9,
+  "Total Score": 64
+}];
+console.log('test');
+Vue.component('data-grid', {
+  template: '#data-template',
+  props: {
+    data: Array,
+    columns: Array,
+    filterKey: String
+  },
+  data: function() {
+    var sortOrders = {}
+    this.columns.forEach(function(key) {
+      sortOrders[key] = 1
+    })
+    return {
+      sortKey: '',
+      sortOrders: sortOrders
     }
-  });
-  
-  
+  },
+  computed: {
+    filteredData: function() {
+      var sortKey = this.sortKey
+      var filterKey = this.filterKey && this.filterKey.toLowerCase()
+      var order = this.sortOrders[sortKey] || 1
+      var data = this.data
+      if (filterKey) {
+        data = data.filter(function(row) {
+          return Object.keys(row).some(function(key) {
+            return String(row[key]).toLowerCase().indexOf(filterKey) > -1
+          })
+        })
+      }
+      if (sortKey) {
+        data = data.slice().sort(function(a, b) {
+          a = a[sortKey]
+          b = b[sortKey]
+          return (a === b ? 0 : a > b ? 1 : -1) * order
+        })
+      }
+      return data
+    }
+  },
+  filters: {
+    capitalize: function(str) {
+      return str.charAt(0).toUpperCase() + str.slice(1)
+    }
+  },
+  methods: {
+    sortBy: function(key) {
+      this.sortKey = key
+      this.sortOrders[key] = this.sortOrders[key] * -1
+    }
+  }
+})
+
+var vueApp = new Vue({
+  el: '#vue-app',
+  data: {
+    searchQuery: '',
+    gridColumns: Object.keys(laptopData[0]),
+    gridData: laptopData
+  }
+})

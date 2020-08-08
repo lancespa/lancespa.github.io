@@ -1,40 +1,40 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
-   "http://www.w3.org/TR/html4/strict.dtd">
-<HTML>
-   <head>
-       <meta charset="UTF-8">
-       <title>First Vue.js</title>
-       <link rel="stylesheet" href="main.css">
-       <script src="https://unpkg.com/vue"></script>
-   </head>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Vue Test</title>
+
+    <!-- This is a development version of Vue.js! -->
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+    <!-- import stylesheet -->
+    <link rel="stylesheet" href="styles.css">
+
+    <!-- Google fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+
+</head>
+
 <body>
-    <div id="vue-app">
-        <form id="search">
-          Search
-          <input name="query" v-model="searchQuery">
-        </form>
-        <data-grid :data="gridData" :columns="gridColumns" :filter-key="searchQuery">
-        </data-grid>
-      </div>
-      <script type="text/x-template" id="data-template">
-        <table>
-          <thead>
-            <tr>
-              <th v-for="key in columns" @click="sortBy(key)" :class="{ active: sortKey == key }">
-                {{ key | capitalize }}
-                <span class="arrow" :class="sortOrders[key] > 0 ? 'asc' : 'dsc'">
-                </span>
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="entry in filteredData">
-              <td v-for="key in columns">
-                {{entry[key]}}
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </script>
+
+<!-- Basic usage -->
+
+<div id="app_basic" v-bind:title="timestamp" class="experiment-block">
+    {{ message }}
+</div>
+
+<script>
+    new Vue(
+        {
+            el: '#app_basic',
+            data: {
+                message: '🐵 Hello World 🔮',
+                timestamp: `Timestamp ${new Date().toLocaleString()}`,
+            }
+        });
+</script>
+
 </body>
-</HTML>
+
+</html>
